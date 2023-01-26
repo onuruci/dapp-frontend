@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 import Intruduction from "./components/Intoduction";
+import Vendor from "./components/Vendor";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -73,7 +74,7 @@ function App() {
             <Intruduction />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            Item Two
+            <Vendor />
           </TabPanel>
         </Box>
       </div>
