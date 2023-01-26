@@ -1,9 +1,12 @@
 import { ethers } from "ethers";
 
 const CONTRACT_ADDRESS = "0xa6E3f2eD1b7bc000d8B775475508d08Cb4DC6453";
+const VENDOR_ADDRESS = "0x9d702AeC5817d9AC174c2A9e843a06194172d0Fa";
 const RPC_URL = "https://api.avax-test.network/ext/bc/C/rpc";
 const ABI = require("./abi.json");
+const VENDOR_ABI = require("./vendor_abi.json");
 export var contract;
+export var vendorContract;
 export var signer;
 export var provider;
 export var walletAddress;
@@ -17,6 +20,7 @@ export const connectWallet = async (setAdress) => {
     walletAddress = await signer.getAddress();
 
     contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+    vendorContract = new ethers.Contract(VENDOR_ADDRESS, VENDOR_ABI, signer);
   } else {
     return "You should install metamask";
   }
@@ -61,5 +65,9 @@ export const getBalance = async (setBalance) => {
   );
   setBalance(res);
 };
+
+export const getVendorBalance = async () => {};
+
+export const getVendorAvaxBalance = async () => {};
 
 export const buyTokens = async (tokenCount, msgValue) => {};
