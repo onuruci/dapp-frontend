@@ -4,16 +4,33 @@ import { useState, useEffect } from "react";
 import "./styles.css"
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Alert from '@mui/material/Alert';
 
-import { walletAddress,getBalance } from "../../utils/interaction";
+import { walletAddress,getBalance, getVendorBalance, getVendorAvaxBalance, buyTokens, tokenBuyListen } from "../../utils/interaction";
 
 const Vendor = () => {
   const [valueInserted, setValueInserted] = useState(0);
   const [balance, setBalance] = useState(0);
+  const [vendorBalance, setVendorBalance] = useState(0);
+  const [vendorAvaxBalance, setVendorAvaxBalance] = useState(0);
+  const [boughtAmount, setBoughtAmount] = useState(0);
+
+  const [successMessage, setSuccessMessage] = useState(false);
 
   useEffect(() => {
     getBalance(setBalance);
-  }, [walletAddress]);
+    getVendorBalance(setVendorBalance);
+    getVendorAvaxBalance(setVendorAvaxBalance);
+    tokenBuyListen(handleBought);
+  }, [walletAddress, successMessage]);
+
+  useEffect(() => {
+    if(successMessage) {
+      setTimeout(() => {
+        setSuccessMessage(false);
+      }, 10000);
+    }
+  }, [successMessage]);
 
   const handleChange = (e) => {
     if(e.target.value >= 0) {
@@ -21,17 +38,32 @@ const Vendor = () => {
     }
   };
 
+  const handleClick = () => {
+    buyTokens(valueInserted);
+  };
+
+  const handleBought = (amount) => {
+    setBoughtAmount(amount);
+    setSuccessMessage(true);
+  };
+
   return(
     <div className="introstyle">
       <div>
-        GRF Tokens for 0.1 Fuji Avax
+        REVO Tokens for 0.1 Fuji Avax
       </div>
       <div>
         Your REVO Balance:  {balance}
       </div>
+      <div>
+        Vendor REVO Balance: {vendorBalance}
+      </div>
+      <div>
+        Vendor Avax Balance: {vendorAvaxBalance}
+      </div>
        <TextField
           id="outlined-number"
-          label="Number"
+          label="REVO amount"
           type="number"
           InputLabelProps={{
             shrink: true,
@@ -43,7 +75,10 @@ const Vendor = () => {
         <div style={{margin:"auto", width:"300px"}}>
           Cost without gas: {valueInserted / 10} Avax
         </div>
-      <Button sx={{margin:"auto", width:"300px"}} variant="contained">Buy</Button>
+      <Button onClick={() => handleClick()} sx={{margin:"auto", width:"300px"}} variant="contained">Buy</Button>
+      {
+        successMessage && <Alert severity="success">Tokens successfully bought {boughtAmount}</Alert>
+      }
     </div>
   );
 };

@@ -10,6 +10,7 @@ export var vendorContract;
 export var signer;
 export var provider;
 export var walletAddress;
+export var tokenBuyListener;
 
 export const connectWallet = async (setAdress) => {
   if (window.ethereum) {
@@ -39,6 +40,11 @@ export const getCurrentWalletConnected = async (setAdress) => {
 
         setAdress(walletAddress);
         contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+        vendorContract = new ethers.Contract(
+          VENDOR_ADDRESS,
+          VENDOR_ABI,
+          signer
+        );
       } else {
         return {
           address: "",
@@ -66,8 +72,37 @@ export const getBalance = async (setBalance) => {
   setBalance(res);
 };
 
-export const getVendorBalance = async () => {};
+export const getVendorBalance = async (setVendorBalance) => {
+  var res = ethers.utils.formatEther(
+    (await vendorContract.getTokenbalance()).toString()
+  );
+  setVendorBalance(res);
+};
 
-export const getVendorAvaxBalance = async () => {};
+export const getVendorAvaxBalance = async (setVendorAvaxBalance) => {
+  var res = ethers.utils.formatEther(
+    (await vendorContract.getETHBalance()).toString()
+  );
+  setVendorAvaxBalance(res);
+};
 
-export const buyTokens = async (tokenCount, msgValue) => {};
+export const buyTokens = async (tokenCount) => {
+  const msgValue = tokenCount / 10;
+  const options = { value: ethers.utils.parseEther(msgValue.toString()) };
+  await vendorContract.buyToken(
+    ethers.utils.parseEther(tokenCount.toString()),
+    options
+  );
+};
+
+export const tokenBuyListen = async (setSth) => {
+  if (vendorContract) {
+    vendorContract.on("TokenBuy", (amount, address) => {
+      if (address.toString() == walletAddress) {
+        setSth(ethers.utils.formatEther(amount.toString()));
+        console.log("CAPTURED");
+        console.log(ethers.utils.formatEther(amount.toString()));
+      }
+    });
+  }
+};
