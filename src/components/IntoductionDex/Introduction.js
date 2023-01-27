@@ -4,7 +4,7 @@ import "./styles.css";
 
 const Introduction = () => {
   return (
-    <div className="introstyle">
+    <code className="introstyle">
       <div>
         A Basic Constant Multiplier AMM Implementation runs on Avalanche Fuji
         testnet.
@@ -22,7 +22,7 @@ const Introduction = () => {
         gain interest.
       </div>
       <div>Smart Contract Addresses </div>
-      <div>
+      <code>
         GRF Token Contract:
         <a
           target="_blank"
@@ -30,8 +30,8 @@ const Introduction = () => {
         >
           0xfbf56915c81c9faF9998acff68B7a69f9ae0489a
         </a>
-      </div>
-      <div>
+      </code>
+      <code>
         RHN Contract:
         <a
           target="_blank"
@@ -39,8 +39,8 @@ const Introduction = () => {
         >
           0xCFDa65C828Ea8bEa5b1813cC4729d7C5a21dfFe9
         </a>
-      </div>
-      <div>
+      </code>
+      <code>
         DEX Contract:
         <a
           target="_blank"
@@ -48,10 +48,10 @@ const Introduction = () => {
         >
           0xb9A48DC50Ca240D42F634a4C2a517B5D30cE11BE
         </a>
-      </div>
+      </code>
       <div>Contact Me: uci.onur@gmail.com</div>
       <div>Onur</div>
-    </div>
+    </code>
   );
 };
 

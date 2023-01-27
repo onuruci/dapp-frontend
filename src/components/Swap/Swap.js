@@ -18,7 +18,7 @@ const Swap = () => {
   };
 
   return (
-    <div className="introstyle">
+    <code className="introstyle">
       <div>
         First you need to add allowance if you dont have enough allowed tokens
       </div>
@@ -87,7 +87,7 @@ const Swap = () => {
       <Button sx={{ margin: "auto", width: "300px" }} variant="contained">
         Swap
       </Button>
-    </div>
+    </code>
   );
 };
 

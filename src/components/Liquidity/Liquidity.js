@@ -12,7 +12,7 @@ const Liquidity = () => {
   const [rhnReserve, setRHNReserve] = useState(0);
 
   return (
-    <div className="introstyle">
+    <code className="introstyle">
       <div>Menage Liquidity</div>
       <div>
         If you didn't give allowance to dex for tokens yet. Go to the swap page
@@ -48,7 +48,7 @@ const Liquidity = () => {
       <Button sx={{ margin: "auto", width: "200px" }} variant="contained">
         Remove Liquidity
       </Button>
-    </div>
+    </code>
   );
 };
 
