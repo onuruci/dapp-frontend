@@ -2,15 +2,17 @@ import React from "react";
 import { useState } from "react";
 
 import Header from "./components/Header";
-import logoImg from "./common/vendor_logo.png";
+import logoImg from "./common/dex_logo.png";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
-import Intruduction from "./components/Intoduction";
-import Vendor from "./components/Vendor";
+import Intruduction from "./components/IntoductionDex";
+import Faucet from "./components/Faucet";
+import Swap from "./components/Swap";
+import Liquidity from "./components/Liquidity";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -66,15 +68,23 @@ function App() {
               }}
               centered
             >
-              <Tab label="Introduction" {...a11yProps(0)} />
-              <Tab label="Vendor" {...a11yProps(1)} />
+              <Tab label="Intro" {...a11yProps(0)} />
+              <Tab label="Faucet" {...a11yProps(1)} />
+              <Tab label="Swap" {...a11yProps(2)} />
+              <Tab label="Menage Liquidity" {...a11yProps(3)} />
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
             <Intruduction />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <Vendor />
+            <Faucet />
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <Swap />
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <Liquidity />
           </TabPanel>
         </Box>
       </div>
