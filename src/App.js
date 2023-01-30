@@ -10,9 +10,9 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 import Intruduction from "./components/IntoductionDex";
-import Faucet from "./components/Faucet";
-import Swap from "./components/Swap";
-import Liquidity from "./components/Liquidity";
+import MintSVGNFT from "./components/MintSVGNFT";
+import Breed from "./components/Breed";
+import ListNFTs from "./components/ListNFTs";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -69,22 +69,22 @@ function App() {
               centered
             >
               <Tab label="Intro" {...a11yProps(0)} />
-              <Tab label="Faucet" {...a11yProps(1)} />
-              <Tab label="Swap" {...a11yProps(2)} />
-              <Tab label="Menage Liquidity" {...a11yProps(3)} />
+              <Tab label="Mint" {...a11yProps(1)} />
+              <Tab label="Breed" {...a11yProps(2)} />
+              <Tab label="List" {...a11yProps(3)} />
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
             <Intruduction />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <Faucet />
+            <MintSVGNFT />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <Swap />
+            <Breed />
           </TabPanel>
           <TabPanel value={value} index={3}>
-            <Liquidity />
+            <ListNFTs />
           </TabPanel>
         </Box>
       </div>

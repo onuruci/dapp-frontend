@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+.introstyle {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  margin-top: 1rem;
+}
+
+.dogimage {
+  margin: auto;
+  width: 200px;
+}
