@@ -1,16 +1,21 @@
 import { ethers } from "ethers";
 
-const CONTRACT_ADDRESS = "0xa6E3f2eD1b7bc000d8B775475508d08Cb4DC6453";
-const VENDOR_ADDRESS = "0x9d702AeC5817d9AC174c2A9e843a06194172d0Fa";
 const RPC_URL = "https://api.avax-test.network/ext/bc/C/rpc";
-const ABI = require("./abi.json");
-const VENDOR_ABI = require("./vendor_abi.json");
-export var contract;
-export var vendorContract;
+const DEX_ABI = require("./DexABI.json");
+const GRF_ABI = require("./GRFABI.json");
+const RHN_ABI = require("./RHNABI.json");
+
+const dexAddress = "0x9f73371e74639e42007395083f054d7B637c8Cd7";
+const grfAddress = "0x7Ee3809B59d2Fa34F6641Bc7d279E12209C7060e";
+const rhnAddress = "0xf5a6D032209e60E6D7E52839fb954CF4c728Da0A";
+
+export var dexContract;
+export var grfContract;
+export var rhnContract;
+
 export var signer;
 export var provider;
 export var walletAddress;
-export var tokenBuyListener;
 
 export const connectWallet = async (setAdress) => {
   if (window.ethereum) {
@@ -20,8 +25,9 @@ export const connectWallet = async (setAdress) => {
     setAdress(await signer.getAddress());
     walletAddress = await signer.getAddress();
 
-    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-    vendorContract = new ethers.Contract(VENDOR_ADDRESS, VENDOR_ABI, signer);
+    dexContract = new ethers.Contract(dexAddress, DEX_ABI, signer);
+    grfContract = new ethers.Contract(grfAddress, GRF_ABI, signer);
+    rhnContract = new ethers.Contract(rhnAddress, RHN_ABI, signer);
   } else {
     return "You should install metamask";
   }
@@ -37,14 +43,11 @@ export const getCurrentWalletConnected = async (setAdress) => {
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = await provider.getSigner();
         walletAddress = await signer.getAddress();
-
         setAdress(walletAddress);
-        contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-        vendorContract = new ethers.Contract(
-          VENDOR_ADDRESS,
-          VENDOR_ABI,
-          signer
-        );
+
+        dexContract = new ethers.Contract(dexAddress, DEX_ABI, signer);
+        grfContract = new ethers.Contract(grfAddress, GRF_ABI, signer);
+        rhnContract = new ethers.Contract(rhnAddress, RHN_ABI, signer);
       } else {
         return {
           address: "",
@@ -65,44 +68,155 @@ export const getCurrentWalletConnected = async (setAdress) => {
   }
 };
 
-export const getBalance = async (setBalance) => {
+export const getGRFBalance = async (_address, setBalance) => {
   var res = ethers.utils.formatEther(
-    (await contract.balanceOf(walletAddress)).toString()
+    (await grfContract.balanceOf(_address)).toString()
   );
   setBalance(res);
 };
 
-export const getVendorBalance = async (setVendorBalance) => {
+export const getRHNBalance = async (_address, setBalance) => {
   var res = ethers.utils.formatEther(
-    (await vendorContract.getTokenbalance()).toString()
+    (await rhnContract.balanceOf(_address)).toString()
   );
-  setVendorBalance(res);
+  setBalance(res);
 };
 
-export const getVendorAvaxBalance = async (setVendorAvaxBalance) => {
-  var res = ethers.utils.formatEther(
-    (await vendorContract.getETHBalance()).toString()
-  );
-  setVendorAvaxBalance(res);
+export const getFaucetTokens = async (_contract) => {
+  await _contract.faucet();
 };
 
-export const buyTokens = async (tokenCount) => {
-  const msgValue = tokenCount / 10;
-  const options = { value: ethers.utils.parseEther(msgValue.toString()) };
-  await vendorContract.buyToken(
-    ethers.utils.parseEther(tokenCount.toString()),
-    options
-  );
-};
-
-export const tokenBuyListen = async (setSth) => {
-  if (vendorContract) {
-    vendorContract.on("TokenBuy", (amount, address) => {
+export const faucetListen = async (_contract, setSth) => {
+  if (_contract) {
+    _contract.on("TokenSend", (address) => {
       if (address.toString() == walletAddress) {
-        setSth(ethers.utils.formatEther(amount.toString()));
-        console.log("CAPTURED");
-        console.log(ethers.utils.formatEther(amount.toString()));
+        setSth();
       }
     });
   }
+};
+
+/// Swap
+
+export const getAllowance = async (_contract, setAllowance) => {
+  if (_contract) {
+    var res = ethers.utils.formatEther(
+      (
+        await _contract.allowance(signer.getAddress(), dexContract.address)
+      ).toString()
+    );
+    setAllowance(res);
+  }
+};
+
+export const addAllowance = async (_contract) => {
+  if (_contract) {
+    await _contract.approve(
+      dexContract.address,
+      ethers.utils.parseEther("100000")
+    );
+  }
+};
+
+export const listenAllowanceEvent = async (setGRF, setRHN, setSuccess) => {
+  if (grfContract) {
+    grfContract.on("Approval", (owner, spender, amount) => {
+      if (
+        owner.toString() == walletAddress &&
+        spender.toString() == dexAddress
+      ) {
+        setGRF(ethers.utils.formatEther(amount.toString()));
+        setSuccess(true);
+      }
+    });
+  }
+
+  if (rhnContract) {
+    rhnContract.on("Approval", (owner, spender, amount) => {
+      if (
+        owner.toString() == walletAddress &&
+        spender.toString() == dexAddress
+      ) {
+        setRHN(ethers.utils.formatEther(amount.toString()));
+        setSuccess(true);
+      }
+    });
+  }
+};
+
+export const getReserves = async (setGRF, setRHN) => {
+  var res1 = ethers.utils.formatEther(
+    (await dexContract.getReserveA()).toString()
+  );
+  setGRF(res1);
+
+  var res2 = ethers.utils.formatEther(
+    (await dexContract.getReserveB()).toString()
+  );
+  setRHN(res2);
+};
+
+export const calculateSwapOut = async (
+  _tokenInAmount,
+  inputReserve,
+  outputReserve,
+  setRes
+) => {
+  let inputWithFee = _tokenInAmount * 100 - _tokenInAmount * 3;
+
+  let tokenOutputAmount =
+    (outputReserve * inputWithFee) / (inputReserve + inputWithFee);
+  setRes(tokenOutputAmount / 100);
+};
+
+export const swaptokens = async (_contract, _amount) => {
+  await dexContract.swap(_contract.address, ethers.utils.parseEther(_amount));
+};
+
+///
+/// Liquidity
+
+export const getTotalShares = async (setShares) => {
+  var res = ethers.utils.formatEther(
+    (await dexContract.totalSupply()).toString()
+  );
+  setShares(res);
+};
+
+export const getUserShares = async (setShares) => {
+  var res = ethers.utils.formatEther(
+    (await dexContract.getShares(signer.getAddress())).toString()
+  );
+  setShares(res);
+};
+
+export const addLiq = async (grfAmount, rhnAmount) => {
+  await dexContract.addLiquidity(
+    ethers.utils.parseEther(grfAmount),
+    ethers.utils.parseEther(rhnAmount)
+  );
+};
+
+export const calculateLiqGRFAmount = async (grfAmount, setRHN) => {
+  var res = ethers.utils.formatEther(
+    (
+      await dexContract.calculateLiquidty(
+        ethers.utils.parseEther(grfAmount),
+        grfAddress
+      )
+    ).toString()
+  );
+  setRHN(res);
+};
+
+export const calculateLiqRHNAmount = async (rhnAmount, setGRF) => {
+  var res = ethers.utils.formatEther(
+    (
+      await dexContract.calculateLiquidty(
+        ethers.utils.parseEther(rhnAmount),
+        rhnAddress
+      )
+    ).toString()
+  );
+  setGRF(res);
 };
