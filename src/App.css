@@ -49,3 +49,9 @@
   margin: auto;
   width: 200px;
 }
+
+@media (max-width: 600px) {
+  .introstyle {
+    padding: 0.5rem;
+  }
+}

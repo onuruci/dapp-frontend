@@ -2,14 +2,14 @@ import React from "react";
 import { useState } from "react";
 
 import Header from "./components/Header";
-import logoImg from "./common/dex_logo.png";
+import logoImg from "./common/nft_logo.png";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
-import Intruduction from "./components/IntoductionDex";
+import Intruduction from "./components/IntoductionDoggo";
 import MintSVGNFT from "./components/MintSVGNFT";
 import Breed from "./components/Breed";
 import ListNFTs from "./components/ListNFTs";
